@@ -1,0 +1,20 @@
+targets:
+  $default:
+    sources:
+      - lib/**
+      - pubspec.*
+      - $package$
+      # Allows the code generator to target files outside of the lib folder
+      - integration_test/**.dart
+    builders:
+      freezed:
+        options:
+          generic_argument_factories: true
+          
+      source_gen|combining_builder:
+        options:
+          ignore_for_file:
+            - non_constant_identifier_names
+            - unused_element
+            - unused_field
+            - prefer_const_declarations
