@@ -26,6 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _changeIndex(int index) {
     currentIndex.value = index;
+
     widget.child.goBranch(
       index,
       initialLocation: index == widget.child.currentIndex,
@@ -101,6 +102,7 @@ class _DashboardItem extends StatelessWidget {
     final child = SvgGenImage(
       isActive ? activateAssetPath : deactivateAssetPath,
     ).svg();
+
     return Expanded(
       child: SizedBox.square(
         dimension: 40.r,

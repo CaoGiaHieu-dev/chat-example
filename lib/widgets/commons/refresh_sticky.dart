@@ -20,7 +20,7 @@ class RefreshSticky extends StatefulWidget {
     ScrollController controller,
   ) builder;
 
-  final FutureOr<void> Function() onRefresh;
+  final Future<void> Function() onRefresh;
   final double size;
   final WidgetBuilder? loadingBuilder;
   final WidgetBuilder? preLoadingBuilder;

@@ -10,10 +10,10 @@ part of 'chat_room_extra.dart';
 
 _$ChatRoomExtraImpl _$$ChatRoomExtraImplFromJson(Map<String, dynamic> json) =>
     _$ChatRoomExtraImpl(
-      username: json['username'] as String,
+      withUser: UserModel.fromJson(json['withUser'] as Map<String, dynamic>?),
     );
 
 Map<String, dynamic> _$$ChatRoomExtraImplToJson(_$ChatRoomExtraImpl instance) =>
     <String, dynamic>{
-      'username': instance.username,
+      'withUser': instance.withUser,
     };

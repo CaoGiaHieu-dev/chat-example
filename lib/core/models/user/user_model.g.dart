@@ -10,34 +10,16 @@ part of 'user_model.dart';
 
 _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
     _$UserModelImpl(
-      optionId: json['_id'] == null
-          ? null
-          : OptionsId.fromJson(json['_id'] as Map<String, dynamic>),
+      uid: json['uid'] as String?,
       email: json['email'] as String?,
-      password: json['password'] as String?,
-      displayName: json['display_name'] as String?,
-      token: json['token'] as String?,
-      image: const Uint8ListConverter().fromJson(json['image'] as List<int>?),
-      imagePath: json['image_path'] as String?,
+      displayName: json['displayName'] as String?,
+      imagePath: json['photoURL'] as String?,
     );
 
 Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
     <String, dynamic>{
-      '_id': instance.optionId,
+      'uid': instance.uid,
       'email': instance.email,
-      'password': instance.password,
-      'display_name': instance.displayName,
-      'token': instance.token,
-      'image': const Uint8ListConverter().toJson(instance.image),
-      'image_path': instance.imagePath,
-    };
-
-_$OptionsIdImpl _$$OptionsIdImplFromJson(Map<String, dynamic> json) =>
-    _$OptionsIdImpl(
-      id: json[r'$oid'] as String,
-    );
-
-Map<String, dynamic> _$$OptionsIdImplToJson(_$OptionsIdImpl instance) =>
-    <String, dynamic>{
-      r'$oid': instance.id,
+      'displayName': instance.displayName,
+      'photoURL': instance.imagePath,
     };

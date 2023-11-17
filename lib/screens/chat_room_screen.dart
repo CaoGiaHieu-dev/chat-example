@@ -18,110 +18,114 @@ class ChatRoomScreen extends StatelessWidget {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: Text(
-          extra.username,
+          extra.withUser.displayName ?? extra.withUser.email ?? '',
         ),
         toolbarHeight: 40.h,
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: 10.h,
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: RefreshSticky(
-                reverse: true,
-                size: 50.h,
-                moveToFirstAfterComplete: true,
-                onRefresh: () {
-                  context.read<ChatRoomProvider>().refreshChat();
-                },
-                builder: (BuildContext context, ScrollController controller) {
-                  return AnimatedList(
-                    key: context.read<ChatRoomProvider>().animateListKey,
-                    reverse: true,
-                    controller: controller,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemBuilder: (context, index, animation) {
-                      bool isSender = context
-                          .read<ChatRoomProvider>()
-                          .messageHistories[index]
-                          .isSender;
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 10.w,
+            vertical: 10.h,
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: RefreshSticky(
+                  reverse: true,
+                  size: 50.h,
+                  moveToFirstAfterComplete: true,
+                  onRefresh: () async {
+                    await context.read<ChatRoomProvider>().refreshChat();
+                  },
+                  builder: (BuildContext context, ScrollController controller) {
+                    return AnimatedList(
+                      key: context.read<ChatRoomProvider>().animateListKey,
+                      reverse: true,
+                      controller: controller,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemBuilder: (context, index, animation) {
+                        bool isSender = context
+                            .read<ChatRoomProvider>()
+                            .messageHistories[index]
+                            .isSender;
 
-                      return FadeTransition(
-                        alwaysIncludeSemantics: true,
-                        opacity: animation,
-                        child: Align(
-                          alignment: isSender
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: UnconstrainedBox(
-                            child: Container(
-                              padding: EdgeInsets.all(10.r),
-                              decoration: BoxDecoration(
-                                color: Colors.pinkAccent,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              constraints: BoxConstraints(
-                                minHeight: 50.h,
-                                maxWidth: context.width * 2 / 3,
-                              ),
-                              margin: EdgeInsets.only(top: 10.h),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                widthFactor: 1,
-                                child: Text(
-                                  context
-                                      .read<ChatRoomProvider>()
-                                      .messageHistories[index]
-                                      .message,
-                                  textAlign: isSender
-                                      ? TextAlign.right
-                                      : TextAlign.left,
-                                  style: context.bodyMedium.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
+                        return FadeTransition(
+                          alwaysIncludeSemantics: true,
+                          opacity: animation,
+                          child: Align(
+                            alignment: isSender
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: UnconstrainedBox(
+                              child: Container(
+                                padding: EdgeInsets.all(10.r),
+                                decoration: BoxDecoration(
+                                  color: Colors.pinkAccent,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                                constraints: BoxConstraints(
+                                  minHeight: 50.h,
+                                  maxWidth: context.width * 2 / 3,
+                                ),
+                                margin: EdgeInsets.only(top: 10.h),
+                                child: Align(
+                                  alignment: isSender
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  widthFactor: 1,
+                                  child: Text(
+                                    context
+                                        .read<ChatRoomProvider>()
+                                        .messageHistories[index]
+                                        .message,
+                                    textAlign: isSender
+                                        ? TextAlign.right
+                                        : TextAlign.left,
+                                    style: context.bodyMedium.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-            SizedBox(height: 10.h),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller:
-                        context.read<ChatRoomProvider>().inputController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 5,
-                    minLines: 1,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
+              SizedBox(height: 10.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller:
+                          context.read<ChatRoomProvider>().inputController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 5,
+                      minLines: 1,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                        ),
+                        border: const OutlineInputBorder(),
                       ),
-                      border: const OutlineInputBorder(),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    context.read<ChatRoomProvider>().onSend();
-                  },
-                  icon: const Icon(Icons.send),
-                ),
-              ],
-            )
-          ],
+                  IconButton(
+                    onPressed: () {
+                      context.read<ChatRoomProvider>().onSend();
+                    },
+                    icon: const Icon(Icons.send),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

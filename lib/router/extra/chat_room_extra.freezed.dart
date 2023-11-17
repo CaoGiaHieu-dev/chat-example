@@ -20,7 +20,7 @@ ChatRoomExtra _$ChatRoomExtraFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ChatRoomExtra {
-  String get username => throw _privateConstructorUsedError;
+  UserModel get withUser => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +34,9 @@ abstract class $ChatRoomExtraCopyWith<$Res> {
           ChatRoomExtra value, $Res Function(ChatRoomExtra) then) =
       _$ChatRoomExtraCopyWithImpl<$Res, ChatRoomExtra>;
   @useResult
-  $Res call({String username});
+  $Res call({UserModel withUser});
+
+  $UserModelCopyWith<$Res> get withUser;
 }
 
 /// @nodoc
@@ -50,14 +52,22 @@ class _$ChatRoomExtraCopyWithImpl<$Res, $Val extends ChatRoomExtra>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? username = null,
+    Object? withUser = null,
   }) {
     return _then(_value.copyWith(
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
+      withUser: null == withUser
+          ? _value.withUser
+          : withUser // ignore: cast_nullable_to_non_nullable
+              as UserModel,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get withUser {
+    return $UserModelCopyWith<$Res>(_value.withUser, (value) {
+      return _then(_value.copyWith(withUser: value) as $Val);
+    });
   }
 }
 
@@ -69,7 +79,10 @@ abstract class _$$ChatRoomExtraImplCopyWith<$Res>
       __$$ChatRoomExtraImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String username});
+  $Res call({UserModel withUser});
+
+  @override
+  $UserModelCopyWith<$Res> get withUser;
 }
 
 /// @nodoc
@@ -83,13 +96,13 @@ class __$$ChatRoomExtraImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? username = null,
+    Object? withUser = null,
   }) {
     return _then(_$ChatRoomExtraImpl(
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
+      withUser: null == withUser
+          ? _value.withUser
+          : withUser // ignore: cast_nullable_to_non_nullable
+              as UserModel,
     ));
   }
 }
@@ -97,17 +110,17 @@ class __$$ChatRoomExtraImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ChatRoomExtraImpl implements _ChatRoomExtra {
-  const _$ChatRoomExtraImpl({required this.username});
+  const _$ChatRoomExtraImpl({required this.withUser});
 
   factory _$ChatRoomExtraImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatRoomExtraImplFromJson(json);
 
   @override
-  final String username;
+  final UserModel withUser;
 
   @override
   String toString() {
-    return 'ChatRoomExtra(username: $username)';
+    return 'ChatRoomExtra(withUser: $withUser)';
   }
 
   @override
@@ -115,13 +128,13 @@ class _$ChatRoomExtraImpl implements _ChatRoomExtra {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatRoomExtraImpl &&
-            (identical(other.username, username) ||
-                other.username == username));
+            (identical(other.withUser, withUser) ||
+                other.withUser == withUser));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, username);
+  int get hashCode => Object.hash(runtimeType, withUser);
 
   @JsonKey(ignore: true)
   @override
@@ -138,14 +151,14 @@ class _$ChatRoomExtraImpl implements _ChatRoomExtra {
 }
 
 abstract class _ChatRoomExtra implements ChatRoomExtra {
-  const factory _ChatRoomExtra({required final String username}) =
+  const factory _ChatRoomExtra({required final UserModel withUser}) =
       _$ChatRoomExtraImpl;
 
   factory _ChatRoomExtra.fromJson(Map<String, dynamic> json) =
       _$ChatRoomExtraImpl.fromJson;
 
   @override
-  String get username;
+  UserModel get withUser;
   @override
   @JsonKey(ignore: true)
   _$$ChatRoomExtraImplCopyWith<_$ChatRoomExtraImpl> get copyWith =>

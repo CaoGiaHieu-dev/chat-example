@@ -20,16 +20,12 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserModel {
-  @JsonKey(name: '_id')
-  OptionsId? get optionId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'uid')
+  String? get uid => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
-  String? get password => throw _privateConstructorUsedError;
-  @JsonKey(name: 'display_name')
+  @JsonKey(name: 'displayName')
   String? get displayName => throw _privateConstructorUsedError;
-  String? get token => throw _privateConstructorUsedError;
-  @Uint8ListConverter()
-  Uint8List? get image => throw _privateConstructorUsedError;
-  @JsonKey(name: 'image_path')
+  @JsonKey(name: 'photoURL')
   String? get imagePath => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,15 +40,10 @@ abstract class $UserModelCopyWith<$Res> {
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: '_id') OptionsId? optionId,
+      {@JsonKey(name: 'uid') String? uid,
       String? email,
-      String? password,
-      @JsonKey(name: 'display_name') String? displayName,
-      String? token,
-      @Uint8ListConverter() Uint8List? image,
-      @JsonKey(name: 'image_path') String? imagePath});
-
-  $OptionsIdCopyWith<$Res>? get optionId;
+      @JsonKey(name: 'displayName') String? displayName,
+      @JsonKey(name: 'photoURL') String? imagePath});
 }
 
 /// @nodoc
@@ -68,56 +59,29 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? optionId = freezed,
+    Object? uid = freezed,
     Object? email = freezed,
-    Object? password = freezed,
     Object? displayName = freezed,
-    Object? token = freezed,
-    Object? image = freezed,
     Object? imagePath = freezed,
   }) {
     return _then(_value.copyWith(
-      optionId: freezed == optionId
-          ? _value.optionId
-          : optionId // ignore: cast_nullable_to_non_nullable
-              as OptionsId?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      password: freezed == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
               as String?,
       displayName: freezed == displayName
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
               as String?,
-      token: freezed == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String?,
-      image: freezed == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as Uint8List?,
       imagePath: freezed == imagePath
           ? _value.imagePath
           : imagePath // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $OptionsIdCopyWith<$Res>? get optionId {
-    if (_value.optionId == null) {
-      return null;
-    }
-
-    return $OptionsIdCopyWith<$Res>(_value.optionId!, (value) {
-      return _then(_value.copyWith(optionId: value) as $Val);
-    });
   }
 }
 
@@ -130,16 +94,10 @@ abstract class _$$UserModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: '_id') OptionsId? optionId,
+      {@JsonKey(name: 'uid') String? uid,
       String? email,
-      String? password,
-      @JsonKey(name: 'display_name') String? displayName,
-      String? token,
-      @Uint8ListConverter() Uint8List? image,
-      @JsonKey(name: 'image_path') String? imagePath});
-
-  @override
-  $OptionsIdCopyWith<$Res>? get optionId;
+      @JsonKey(name: 'displayName') String? displayName,
+      @JsonKey(name: 'photoURL') String? imagePath});
 }
 
 /// @nodoc
@@ -153,39 +111,24 @@ class __$$UserModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? optionId = freezed,
+    Object? uid = freezed,
     Object? email = freezed,
-    Object? password = freezed,
     Object? displayName = freezed,
-    Object? token = freezed,
-    Object? image = freezed,
     Object? imagePath = freezed,
   }) {
     return _then(_$UserModelImpl(
-      optionId: freezed == optionId
-          ? _value.optionId
-          : optionId // ignore: cast_nullable_to_non_nullable
-              as OptionsId?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      password: freezed == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
               as String?,
       displayName: freezed == displayName
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
               as String?,
-      token: freezed == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String?,
-      image: freezed == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as Uint8List?,
       imagePath: freezed == imagePath
           ? _value.imagePath
           : imagePath // ignore: cast_nullable_to_non_nullable
@@ -198,39 +141,29 @@ class __$$UserModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserModelImpl with DiagnosticableTreeMixin implements _UserModel {
   const _$UserModelImpl(
-      {@JsonKey(name: '_id') this.optionId,
+      {@JsonKey(name: 'uid') this.uid,
       this.email,
-      this.password,
-      @JsonKey(name: 'display_name') this.displayName,
-      this.token,
-      @Uint8ListConverter() this.image,
-      @JsonKey(name: 'image_path') this.imagePath});
+      @JsonKey(name: 'displayName') this.displayName,
+      @JsonKey(name: 'photoURL') this.imagePath});
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
 
   @override
-  @JsonKey(name: '_id')
-  final OptionsId? optionId;
+  @JsonKey(name: 'uid')
+  final String? uid;
   @override
   final String? email;
   @override
-  final String? password;
-  @override
-  @JsonKey(name: 'display_name')
+  @JsonKey(name: 'displayName')
   final String? displayName;
   @override
-  final String? token;
-  @override
-  @Uint8ListConverter()
-  final Uint8List? image;
-  @override
-  @JsonKey(name: 'image_path')
+  @JsonKey(name: 'photoURL')
   final String? imagePath;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'UserModel(optionId: $optionId, email: $email, password: $password, displayName: $displayName, token: $token, image: $image, imagePath: $imagePath)';
+    return 'UserModel(uid: $uid, email: $email, displayName: $displayName, imagePath: $imagePath)';
   }
 
   @override
@@ -238,12 +171,9 @@ class _$UserModelImpl with DiagnosticableTreeMixin implements _UserModel {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'UserModel'))
-      ..add(DiagnosticsProperty('optionId', optionId))
+      ..add(DiagnosticsProperty('uid', uid))
       ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('password', password))
       ..add(DiagnosticsProperty('displayName', displayName))
-      ..add(DiagnosticsProperty('token', token))
-      ..add(DiagnosticsProperty('image', image))
       ..add(DiagnosticsProperty('imagePath', imagePath));
   }
 
@@ -252,30 +182,18 @@ class _$UserModelImpl with DiagnosticableTreeMixin implements _UserModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UserModelImpl &&
-            (identical(other.optionId, optionId) ||
-                other.optionId == optionId) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.password, password) ||
-                other.password == password) &&
             (identical(other.displayName, displayName) ||
                 other.displayName == displayName) &&
-            (identical(other.token, token) || other.token == token) &&
-            const DeepCollectionEquality().equals(other.image, image) &&
             (identical(other.imagePath, imagePath) ||
                 other.imagePath == imagePath));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      optionId,
-      email,
-      password,
-      displayName,
-      token,
-      const DeepCollectionEquality().hash(image),
-      imagePath);
+  int get hashCode =>
+      Object.hash(runtimeType, uid, email, displayName, imagePath);
 
   @JsonKey(ignore: true)
   @override
@@ -293,184 +211,27 @@ class _$UserModelImpl with DiagnosticableTreeMixin implements _UserModel {
 
 abstract class _UserModel implements UserModel {
   const factory _UserModel(
-      {@JsonKey(name: '_id') final OptionsId? optionId,
+      {@JsonKey(name: 'uid') final String? uid,
       final String? email,
-      final String? password,
-      @JsonKey(name: 'display_name') final String? displayName,
-      final String? token,
-      @Uint8ListConverter() final Uint8List? image,
-      @JsonKey(name: 'image_path') final String? imagePath}) = _$UserModelImpl;
+      @JsonKey(name: 'displayName') final String? displayName,
+      @JsonKey(name: 'photoURL') final String? imagePath}) = _$UserModelImpl;
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
 
   @override
-  @JsonKey(name: '_id')
-  OptionsId? get optionId;
+  @JsonKey(name: 'uid')
+  String? get uid;
   @override
   String? get email;
   @override
-  String? get password;
-  @override
-  @JsonKey(name: 'display_name')
+  @JsonKey(name: 'displayName')
   String? get displayName;
   @override
-  String? get token;
-  @override
-  @Uint8ListConverter()
-  Uint8List? get image;
-  @override
-  @JsonKey(name: 'image_path')
+  @JsonKey(name: 'photoURL')
   String? get imagePath;
   @override
   @JsonKey(ignore: true)
   _$$UserModelImplCopyWith<_$UserModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-OptionsId _$OptionsIdFromJson(Map<String, dynamic> json) {
-  return _OptionsId.fromJson(json);
-}
-
-/// @nodoc
-mixin _$OptionsId {
-  @JsonKey(name: r'$oid')
-  String get id => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $OptionsIdCopyWith<OptionsId> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $OptionsIdCopyWith<$Res> {
-  factory $OptionsIdCopyWith(OptionsId value, $Res Function(OptionsId) then) =
-      _$OptionsIdCopyWithImpl<$Res, OptionsId>;
-  @useResult
-  $Res call({@JsonKey(name: r'$oid') String id});
-}
-
-/// @nodoc
-class _$OptionsIdCopyWithImpl<$Res, $Val extends OptionsId>
-    implements $OptionsIdCopyWith<$Res> {
-  _$OptionsIdCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$OptionsIdImplCopyWith<$Res>
-    implements $OptionsIdCopyWith<$Res> {
-  factory _$$OptionsIdImplCopyWith(
-          _$OptionsIdImpl value, $Res Function(_$OptionsIdImpl) then) =
-      __$$OptionsIdImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({@JsonKey(name: r'$oid') String id});
-}
-
-/// @nodoc
-class __$$OptionsIdImplCopyWithImpl<$Res>
-    extends _$OptionsIdCopyWithImpl<$Res, _$OptionsIdImpl>
-    implements _$$OptionsIdImplCopyWith<$Res> {
-  __$$OptionsIdImplCopyWithImpl(
-      _$OptionsIdImpl _value, $Res Function(_$OptionsIdImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-  }) {
-    return _then(_$OptionsIdImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$OptionsIdImpl with DiagnosticableTreeMixin implements _OptionsId {
-  const _$OptionsIdImpl({@JsonKey(name: r'$oid') required this.id});
-
-  factory _$OptionsIdImpl.fromJson(Map<String, dynamic> json) =>
-      _$$OptionsIdImplFromJson(json);
-
-  @override
-  @JsonKey(name: r'$oid')
-  final String id;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'OptionsId(id: $id)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'OptionsId'))
-      ..add(DiagnosticsProperty('id', id));
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$OptionsIdImpl &&
-            (identical(other.id, id) || other.id == id));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType, id);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$OptionsIdImplCopyWith<_$OptionsIdImpl> get copyWith =>
-      __$$OptionsIdImplCopyWithImpl<_$OptionsIdImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$OptionsIdImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _OptionsId implements OptionsId {
-  const factory _OptionsId({@JsonKey(name: r'$oid') required final String id}) =
-      _$OptionsIdImpl;
-
-  factory _OptionsId.fromJson(Map<String, dynamic> json) =
-      _$OptionsIdImpl.fromJson;
-
-  @override
-  @JsonKey(name: r'$oid')
-  String get id;
-  @override
-  @JsonKey(ignore: true)
-  _$$OptionsIdImplCopyWith<_$OptionsIdImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

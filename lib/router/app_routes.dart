@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
@@ -36,6 +37,7 @@ class AppRouter {
   AppRouter._();
 
   static BuildContext get currentContext {
+    
     final context = router.routerDelegate.navigatorKey.currentContext;
     if (context?.mounted ?? false) {
       return router.routerDelegate.navigatorKey.currentContext!;
@@ -52,6 +54,19 @@ class AppRouter {
     debugLogDiagnostics: kDebugMode,
     initialLocation: Routes.home,
     routes: $appRoutes,
+    redirect: (context, state) {
+      if (FirebaseAuth.instance.currentUser == null) {
+        switch (state.fullPath) {
+          case Routes.login:
+          case Routes.register:
+            break;
+          default:
+            return Routes.login;
+        }
+      }
+
+      return null;
+    },
   );
 }
 
@@ -126,7 +141,9 @@ class DashboardRoute extends StatefulShellRouteData {
       providers: [
         ChangeNotifierProvider(
           create: (context) => UserProvider(),
-          lazy: true,
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ChatLobbyProvider(),
         ),
       ],
       child: DashboardScreen(child: navigationShell),
@@ -147,11 +164,7 @@ class ChatLobbyRoute extends GoRouteData {
   const ChatLobbyRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return ChangeNotifierProvider(
-      create: (context) => ChatLobbyProvider(),
-      lazy: true,
-      child: const ChatLobbyScreen(),
-    );
+    return const ChatLobbyScreen();
   }
 }
 
@@ -178,15 +191,20 @@ class UserRoute extends GoRouteData {
   path: Routes.chatRoom,
 )
 class ChatRoomRoute extends GoRouteData {
-  const ChatRoomRoute({required this.$extra});
+  const ChatRoomRoute({
+    required this.roomId,
+    required this.$extra,
+  });
 
   final ChatRoomExtra $extra;
+  final String roomId;
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = _navigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return ChangeNotifierProvider(
-      create: (context) => ChatRoomProvider(),
-      lazy: true,
+      create: (context) => ChatRoomProvider(roomId),
       child: ChatRoomScreen(extra: $extra),
     );
   }

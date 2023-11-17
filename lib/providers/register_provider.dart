@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../core/repositories/base_repositories.dart';
+import '../core/models/user/user_model.dart';
 import '../core/utilities/app_dialog.dart';
 import '../core/utilities/app_utils.dart';
 import '../router/app_routes.dart';
@@ -13,7 +13,7 @@ class RegisterProvider extends ChangeNotifier {
   final key = GlobalKey<FormState>();
 
   final emailController = TextEditingController(text: 'test@gmail.com');
-  final passController = TextEditingController(text: '123');
+  final passController = TextEditingController(text: '123456');
 
   final users = FirebaseFirestore.instance.collection('users');
 
@@ -29,11 +29,19 @@ class RegisterProvider extends ChangeNotifier {
       AppUtils.showLoading();
 
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        final credential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text,
           password: passController.text,
         );
-        ;
+
+        final user = UserModel(
+          uid: credential.user?.uid,
+          displayName: credential.user?.displayName ?? credential.user?.email,
+          email: credential.user?.email,
+        );
+
+        await users.add(user.toJson());
 
         AppDialog.showDialogDetail(
           title: 'Success',
@@ -49,58 +57,20 @@ class RegisterProvider extends ChangeNotifier {
           },
         );
       } on FirebaseAuthException catch (e) {
-        key.currentState?.reset();
-
-        AppUtils.hideLoading();
-
         AppDialog.showDialogDetail(
           title: 'Error',
           content: e.message ?? e.toString(),
         );
       } catch (e) {
-        key.currentState?.reset();
-
-        AppUtils.hideLoading();
-
         AppDialog.showDialogDetail(
           title: 'Error',
           content: e.toString(),
         );
       } finally {
+        key.currentState?.reset();
+
         AppUtils.hideLoading();
       }
-
-      // final result = await Repositories.auth.register(
-      //   email: emailController.text,
-      //   password: passController.text,
-      // );
-
-      // AppUtils.hideLoading();
-
-      // result.when(
-      //   success: (data) {
-      //     AppDialog.showDialogDetail(
-      //       title: 'Success',
-      //       content: 'You account have been created',
-      //       onTap: () {
-      //         context.pop();
-      //         LoginRoute(
-      //           $extra: LoginExtra(
-      //             email: emailController.text,
-      //             password: passController.text,
-      //           ),
-      //         ).replace(context);
-      //       },
-      //     );
-      //   },
-      //   error: (type, code, error) {
-      //     key.currentState?.reset();
-      //     AppDialog.showDialogDetail(
-      //       title: 'Error',
-      //       content: error,
-      //     );
-      //   },
-      // );
     }
   }
 }

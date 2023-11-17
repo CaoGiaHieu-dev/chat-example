@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import 'core/config.dart';
+import 'providers/app_provider.dart';
 import 'router/app_routes.dart';
+import 'widgets/dialogs/loading_widget.dart';
 
 class RootApp extends StatelessWidget {
   const RootApp({super.key});
@@ -50,7 +53,29 @@ class AppBuilder extends StatelessWidget {
         data: MediaQuery.of(context).copyWith(
           textScaleFactor: 1,
         ),
-        child: child,
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => AppProvider(),
+            )
+          ],
+          builder: (context, child) {
+            return Stack(
+              children: [
+                child!,
+                context.select<AppProvider, bool>((value) {
+                  return value.loading;
+                })
+                    ? ColoredBox(
+                        color: Colors.black.withOpacity(0.35),
+                        child: const LoadingWidget(),
+                      )
+                    : const SizedBox(),
+              ],
+            );
+          },
+          child: child,
+        ),
       ),
     );
   }

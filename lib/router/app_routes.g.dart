@@ -152,16 +152,21 @@ extension $UserRouteExtension on UserRoute {
 
 RouteBase get $chatRoomRoute => GoRouteData.$route(
       path: '/chat-room',
+      parentNavigatorKey: ChatRoomRoute.$parentNavigatorKey,
       factory: $ChatRoomRouteExtension._fromState,
     );
 
 extension $ChatRoomRouteExtension on ChatRoomRoute {
   static ChatRoomRoute _fromState(GoRouterState state) => ChatRoomRoute(
+        roomId: state.uri.queryParameters['room-id']!,
         $extra: state.extra as ChatRoomExtra,
       );
 
   String get location => GoRouteData.$location(
         '/chat-room',
+        queryParams: {
+          'room-id': roomId,
+        },
       );
 
   void go(BuildContext context) => context.go(location, extra: $extra);

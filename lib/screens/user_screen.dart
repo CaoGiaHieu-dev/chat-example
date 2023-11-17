@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../core/extensions/context_extension.dart';
+import '../core/models/user/user_model.dart';
 import '../providers/user_provider.dart';
 import '../widgets/commons/refresh_sticky.dart';
 
@@ -20,7 +21,7 @@ class _UserScreenState extends State<UserScreen> {
     return RefreshSticky(
       onRefresh: context.read<UserProvider>().getUserDetail,
       builder: (BuildContext context, ScrollController controller) {
-        final userDetail = context.select<UserProvider, User?>(
+        final userDetail = context.select<UserProvider, UserModel?>(
           (value) {
             return value.userDetail;
           },
@@ -31,7 +32,7 @@ class _UserScreenState extends State<UserScreen> {
           controller: controller,
           child: Column(
             children: [
-              userDetail?.photoURL?.isEmpty ?? true
+              userDetail?.imagePath?.isEmpty ?? true
                   ? Icon(
                       Icons.person,
                       color: Colors.black,
@@ -43,7 +44,7 @@ class _UserScreenState extends State<UserScreen> {
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: NetworkImage(
-                            userDetail?.photoURL ?? '',
+                            userDetail?.imagePath ?? '',
                           ),
                           onError: (exception, stackTrace) {},
                         ),
@@ -72,6 +73,10 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               ),
               SizedBox(height: 10.h),
+              _DetailField(
+                title: 'Email Display',
+                content: userDetail?.email ?? '',
+              ),
               SizedBox(height: 10.h),
               MaterialButton(
                 shape: RoundedRectangleBorder(
@@ -95,6 +100,38 @@ class _UserScreenState extends State<UserScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class _DetailField extends StatelessWidget {
+  const _DetailField({
+    required this.title,
+    required this.content,
+  });
+  final String title;
+  final String content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style: context.titleMedium.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 10.h),
+          Text(
+            content,
+            style: context.bodyMedium,
+          )
+        ],
+      ),
     );
   }
 }

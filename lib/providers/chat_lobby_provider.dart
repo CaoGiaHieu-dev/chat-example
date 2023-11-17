@@ -1,28 +1,61 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../core/utilities/utilities.dart';
+import '../core/models/user/user_model.dart';
+import '../router/app_routes.dart';
+import '../router/extra/chat_room_extra.dart';
 
 class ChatLobbyProvider extends ChangeNotifier {
   ChatLobbyProvider() {
     init();
   }
 
-  final user = FirebaseAuth.instance.currentUser;
+  final userCol = FirebaseFirestore.instance.collection('users');
+
+  final userList = <UserModel>[];
+
   void init() {
-    for (final providerProfile in user?.providerData ?? []) {
-      // ID of the provider (google.com, apple.cpm, etc.)
-      // final provider = providerProfile.providerId;
+    fetchUserList();
+  }
 
-      // // UID specific to the provider
-      // final uid = providerProfile.uid;
+  Future<void> fetchUserList() async {
+    final userResult = await userCol
+        .where(
+          'uid',
+          whereNotIn: [FirebaseAuth.instance.currentUser?.uid],
+        )
+        .withConverter(
+          fromFirestore: (snapshot, options) =>
+              UserModel.fromJson(snapshot.data()),
+          toFirestore: (value, options) => value.toJson(),
+        )
+        .get();
 
-      // // Name, email address, and profile photo URL
-      // final name = providerProfile.displayName;
-      // final emailAddress = providerProfile.email;
-      // final profilePhoto = providerProfile.photoURL;
+    userList
+      ..clear()
+      ..addAll(
+        userResult.docs.map(
+          (e) => e.data(),
+        ),
+      );
 
-      AppLogger.print(providerProfile);
-    }
+    notifyListeners();
+  }
+
+  void jonChatRoom(BuildContext context, UserModel withUser) {
+    final roomIdGenerator = String.fromCharCodes(
+      [
+        ...?withUser.uid?.codeUnits,
+        ...?FirebaseAuth.instance.currentUser?.uid.codeUnits,
+      ]..sort((a, b) => a.compareTo(b)),
+    );
+
+    ChatRoomRoute(
+      roomId: roomIdGenerator,
+      $extra: ChatRoomExtra(
+        withUser: withUser,
+      ),
+    ).push(context);
   }
 }

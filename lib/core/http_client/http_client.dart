@@ -30,7 +30,7 @@ class HttpClient<T> {
     ..options.headers = {
       "Content-Type": "application/json",
     }
-    ..interceptors.add(RenewInterceptors())
+    // ..interceptors.add(RenewInterceptors())
     ..interceptors.add(LoggerInterceptors());
 
   static void openLog() => _dio.interceptors.add(LogInterceptor());
