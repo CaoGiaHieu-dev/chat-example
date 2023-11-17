@@ -60,11 +60,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAmE_4plNHzV4UD2CyAx_EUI9GdsdTKSQY',
-    appId: '1:1040303093355:ios:ef8b0d5a1010e3440aa32e',
+    appId: '1:1040303093355:ios:2f3b2e298d961c950aa32e',
     messagingSenderId: '1040303093355',
     projectId: 'chat-example-d8c48',
     databaseURL: 'https://chat-example-d8c48-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'chat-example-d8c48.appspot.com',
-    iosBundleId: 'com.chat.hieucg',
+    iosBundleId: 'com.example.chatExample',
   );
 }
