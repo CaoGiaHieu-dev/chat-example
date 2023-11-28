@@ -16,13 +16,13 @@ class RootApp extends StatelessWidget {
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (context, child) {
+      builder: (context, _) {
         return MaterialApp.router(
           backButtonDispatcher: RootBackButtonDispatcher(),
+          debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: AppTheme.themeMode,
-          debugShowCheckedModeBanner: false,
           routeInformationProvider: AppRouter.router.routeInformationProvider,
           routeInformationParser: AppRouter.router.routeInformationParser,
           routerDelegate: AppRouter.router.routerDelegate,

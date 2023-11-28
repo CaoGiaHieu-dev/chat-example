@@ -30,6 +30,54 @@ class AppTheme {
         ),
       );
 
+  static TextTheme textThemeScale(TextTheme textTheme) => textTheme.copyWith(
+        labelSmall: textTheme.labelSmall?.copyWith(
+          fontSize: textTheme.labelSmall?.fontSize?.sp,
+        ),
+        labelMedium: textTheme.labelMedium?.copyWith(
+          fontSize: textTheme.labelMedium?.fontSize?.sp,
+        ),
+        labelLarge: textTheme.labelLarge?.copyWith(
+          fontSize: textTheme.labelLarge?.fontSize?.sp,
+        ),
+        bodySmall: textTheme.bodySmall?.copyWith(
+          fontSize: textTheme.bodySmall?.fontSize?.sp,
+        ),
+        bodyMedium: textTheme.bodyMedium?.copyWith(
+          fontSize: textTheme.bodyMedium?.fontSize?.sp,
+        ),
+        bodyLarge: textTheme.bodyLarge?.copyWith(
+          fontSize: textTheme.bodyLarge?.fontSize?.sp,
+        ),
+        titleSmall: textTheme.titleSmall?.copyWith(
+          fontSize: textTheme.titleSmall?.fontSize?.sp,
+        ),
+        titleMedium: textTheme.titleMedium?.copyWith(
+          fontSize: textTheme.titleMedium?.fontSize?.sp,
+        ),
+        titleLarge: textTheme.titleLarge?.copyWith(
+          fontSize: textTheme.titleLarge?.fontSize?.sp,
+        ),
+        displaySmall: textTheme.displaySmall?.copyWith(
+          fontSize: textTheme.displaySmall?.fontSize?.sp,
+        ),
+        displayMedium: textTheme.displayMedium?.copyWith(
+          fontSize: textTheme.displayMedium?.fontSize?.sp,
+        ),
+        displayLarge: textTheme.displayLarge?.copyWith(
+          fontSize: textTheme.displayLarge?.fontSize?.sp,
+        ),
+        headlineSmall: textTheme.headlineSmall?.copyWith(
+          fontSize: textTheme.headlineSmall?.fontSize?.sp,
+        ),
+        headlineMedium: textTheme.headlineMedium?.copyWith(
+          fontSize: textTheme.headlineMedium?.fontSize?.sp,
+        ),
+        headlineLarge: textTheme.headlineLarge?.copyWith(
+          fontSize: textTheme.headlineLarge?.fontSize?.sp,
+        ),
+      );
+
   static ThemeData get lightTheme {
     const colorScheme = ColorScheme.light();
     final textTheme = themeData(colorScheme).textTheme;
@@ -52,40 +100,7 @@ class AppTheme {
         ),
         centerTitle: false,
       ),
-      textTheme: textTheme.copyWith(
-        labelLarge: textTheme.labelLarge!.copyWith(
-          fontSize: 14.sp,
-          letterSpacing: 0.04.sp,
-        ),
-        bodyLarge: textTheme.bodyLarge!.copyWith(
-          fontSize: 14.sp,
-          letterSpacing: 0.04.sp,
-        ),
-        bodyMedium: textTheme.bodyMedium!.copyWith(
-          fontSize: 14.sp,
-          letterSpacing: 0.04.sp,
-        ),
-        titleMedium: textTheme.titleMedium!.copyWith(
-          fontSize: 16.sp,
-          letterSpacing: 0.04.sp,
-        ),
-        titleSmall: textTheme.titleSmall!.copyWith(
-          fontSize: 16.sp,
-          letterSpacing: 0.04.sp,
-        ),
-        bodySmall: textTheme.bodySmall!.copyWith(
-          fontSize: 12.sp,
-          letterSpacing: 0.04.sp,
-        ),
-        labelSmall: textTheme.labelSmall!.copyWith(
-          fontSize: 10.sp,
-          letterSpacing: 0.04.sp,
-        ),
-        titleLarge: textTheme.titleLarge!.copyWith(
-          fontSize: 20.sp,
-          letterSpacing: 0.04.sp,
-        ),
-      ),
+      textTheme: textThemeScale(textTheme),
     );
   }
 
@@ -104,32 +119,7 @@ class AppTheme {
         ),
         centerTitle: false,
       ),
-      textTheme: textTheme.copyWith(
-        labelLarge: textTheme.labelLarge!.copyWith(
-          fontSize: 14.sp,
-        ),
-        bodyLarge: textTheme.bodyLarge!.copyWith(
-          fontSize: 14.sp,
-        ),
-        bodyMedium: textTheme.bodyMedium!.copyWith(
-          fontSize: 14.sp,
-        ),
-        titleMedium: textTheme.titleMedium!.copyWith(
-          fontSize: 16.sp,
-        ),
-        titleSmall: textTheme.titleSmall!.copyWith(
-          fontSize: 16,
-        ),
-        bodySmall: textTheme.bodySmall!.copyWith(
-          fontSize: 12.sp,
-        ),
-        labelSmall: textTheme.labelSmall!.copyWith(
-          fontSize: 10.sp,
-        ),
-        titleLarge: textTheme.titleLarge!.copyWith(
-          fontSize: 20.sp,
-        ),
-      ),
+      textTheme: textThemeScale(textTheme),
     );
   }
 }

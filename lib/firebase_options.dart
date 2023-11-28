@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,22 +46,36 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDyt4H9v4H4812J8m39yUxv_Nq4444mCf4',
+    appId: '1:1040303093355:web:c2e2e849c914bb280aa32e',
+    messagingSenderId: '1040303093355',
+    projectId: 'chat-example-d8c48',
+    authDomain: 'chat-example-d8c48.firebaseapp.com',
+    databaseURL:
+        'https://chat-example-d8c48-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'chat-example-d8c48.appspot.com',
+    measurementId: 'G-FC890NGC9B',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAsaBj03S6X0i3Y3TA9Z__l9lnibgT5qTw',
     appId: '1:1040303093355:android:10a15baed227aa4a0aa32e',
     messagingSenderId: '1040303093355',
     projectId: 'chat-example-d8c48',
-    databaseURL: 'https://chat-example-d8c48-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://chat-example-d8c48-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'chat-example-d8c48.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAmE_4plNHzV4UD2CyAx_EUI9GdsdTKSQY',
-    appId: '1:1040303093355:ios:2f3b2e298d961c950aa32e',
+    appId: '1:1040303093355:ios:272197b7fe1656370aa32e',
     messagingSenderId: '1040303093355',
     projectId: 'chat-example-d8c48',
-    databaseURL: 'https://chat-example-d8c48-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://chat-example-d8c48-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'chat-example-d8c48.appspot.com',
-    iosBundleId: 'com.example.chatExample',
+    iosBundleId: 'com.example.chatExample123',
   );
 }
