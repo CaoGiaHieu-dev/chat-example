@@ -83,7 +83,7 @@ class RegisterScreen extends StatelessWidget {
                         ),
                         MaterialButton(
                           onPressed: () {
-                            const LoginRoute().replace(context);
+                            const LoginRoute().go(context);
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),

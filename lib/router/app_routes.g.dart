@@ -12,7 +12,6 @@ List<RouteBase> get $appRoutes => [
       $loginRoute,
       $registerRoute,
       $dashboardRoute,
-      $chatRoomRoute,
     ];
 
 RouteBase get $loginRoute => GoRouteData.$route(
@@ -64,6 +63,7 @@ extension $RegisterRouteExtension on RegisterRoute {
 }
 
 RouteBase get $dashboardRoute => StatefulShellRouteData.$route(
+      navigatorContainerBuilder: DashboardRoute.$navigatorContainerBuilder,
       factory: $DashboardRouteExtension._fromState,
       branches: [
         StatefulShellBranchData.$branch(
@@ -79,6 +79,12 @@ RouteBase get $dashboardRoute => StatefulShellRouteData.$route(
             GoRouteData.$route(
               path: '/chat-lobby',
               factory: $ChatLobbyRouteExtension._fromState,
+              routes: [
+                GoRouteData.$route(
+                  path: 'chat-room/:roomId',
+                  factory: $ChatRoomRouteExtension._fromState,
+                ),
+              ],
             ),
           ],
         ),
@@ -133,6 +139,28 @@ extension $ChatLobbyRouteExtension on ChatLobbyRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
+extension $ChatRoomRouteExtension on ChatRoomRoute {
+  static ChatRoomRoute _fromState(GoRouterState state) => ChatRoomRoute(
+        roomId: state.pathParameters['roomId']!,
+        $extra: state.extra as ChatRoomExtra,
+      );
+
+  String get location => GoRouteData.$location(
+        '/chat-lobby/chat-room/${Uri.encodeComponent(roomId)}',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}
+
 extension $UserRouteExtension on UserRoute {
   static UserRoute _fromState(GoRouterState state) => const UserRoute();
 
@@ -148,35 +176,4 @@ extension $UserRouteExtension on UserRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $chatRoomRoute => GoRouteData.$route(
-      path: '/chat-room',
-      parentNavigatorKey: ChatRoomRoute.$parentNavigatorKey,
-      factory: $ChatRoomRouteExtension._fromState,
-    );
-
-extension $ChatRoomRouteExtension on ChatRoomRoute {
-  static ChatRoomRoute _fromState(GoRouterState state) => ChatRoomRoute(
-        roomId: state.uri.queryParameters['room-id']!,
-        $extra: state.extra as ChatRoomExtra,
-      );
-
-  String get location => GoRouteData.$location(
-        '/chat-room',
-        queryParams: {
-          'room-id': roomId,
-        },
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
 }

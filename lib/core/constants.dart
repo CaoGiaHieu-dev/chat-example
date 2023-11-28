@@ -11,5 +11,7 @@ class ApiUtils {
 class StringUtils {
   StringUtils._();
 
-  static String tokenPref = 'tokenPref';
+  static const  authorization = 'Authorization';
+  
+  static const  tokenPref = 'tokenPref';
 }

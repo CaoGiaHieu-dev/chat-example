@@ -1,20 +1,21 @@
-import 'base/error_type.dart';
+import 'package:dio/dio.dart';
 
 sealed class Result<T> {
   R? when<R>({
-    R Function(T? data)? success,
-    R Function(ErrorType type, int? code, String error)? error,
+    R? Function(T? data)? success,
+    R? Function(DioExceptionType type, int? code, String error)? error,
   }) {
-    if (this is Success<T?>) {
-      return success?.call(((this as Success).data));
-    } else if (this is Error<T>) {
-      return error?.call(
-        (this as Error<T>).type,
-        (this as Error<T>).errorCode,
-        (this as Error<T>).message,
-      );
-    } else {
-      return error?.call(ErrorType.other, null, toString());
+    switch (this) {
+      case Success<T?>():
+        return success?.call(((this as Success).data));
+      case Error<T>():
+        return error?.call(
+          (this as Error<T>).type,
+          (this as Error<T>).errorCode,
+          (this as Error<T>).message,
+        );
+      default:
+        return error?.call(DioExceptionType.unknown, null, toString());
     }
   }
 }
@@ -26,8 +27,12 @@ class Success<T> extends Result<T> {
 
 class Error<T> extends Result<T> {
   int? errorCode;
-  ErrorType type;
+  DioExceptionType type;
   String message;
 
-  Error({this.type = ErrorType.other, required this.message, this.errorCode});
+  Error({
+    this.type = DioExceptionType.unknown,
+    required this.message,
+    this.errorCode,
+  });
 }

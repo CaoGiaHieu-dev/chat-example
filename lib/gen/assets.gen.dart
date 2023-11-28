@@ -28,6 +28,9 @@ class Assets {
   static const SvgGenImage iconsHomeActivate =
       SvgGenImage('assets/icons/home_activate.svg');
 
+  /// File path: assets/icons/smile.svg
+  static const SvgGenImage iconsSmile = SvgGenImage('assets/icons/smile.svg');
+
   /// File path: assets/icons/user.svg
   static const SvgGenImage iconsUser = SvgGenImage('assets/icons/user.svg');
 
@@ -41,6 +44,7 @@ class Assets {
         iconsChatActivate,
         iconsHome,
         iconsHomeActivate,
+        iconsSmile,
         iconsUser,
         iconsUserActivate
       ];

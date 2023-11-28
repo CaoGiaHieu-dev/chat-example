@@ -5,14 +5,36 @@ class AppTheme {
 
   static ThemeMode themeMode = ThemeMode.light;
 
-  static ThemeData get lightTheme {
-    ColorScheme colorScheme = const ColorScheme.light();
+  static ThemeData themeData(ColorScheme colorScheme) => ThemeData(
+        useMaterial3: true,
+        primaryColor: colorScheme.primary,
+        colorScheme: colorScheme,
+        brightness: colorScheme.brightness,
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: CustomPageTransitionBuilder(),
+            TargetPlatform.iOS: CustomPageTransitionBuilder(),
+          },
+        ),
+        cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
+          textTheme: CupertinoTextThemeData(
+            dateTimePickerTextStyle: TextStyle(
+              fontSize: 16.sp,
+              color: Colors.black,
+            ),
+            pickerTextStyle: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      );
 
-    final themeData = ThemeData(
-      useMaterial3: true,
-      primaryColor: colorScheme.primary,
-      colorScheme: colorScheme,
-      brightness: colorScheme.brightness,
+  static ThemeData get lightTheme {
+    const colorScheme = ColorScheme.light();
+    final textTheme = themeData(colorScheme).textTheme;
+
+    return themeData(colorScheme).copyWith(
       dialogTheme: DialogTheme(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -30,27 +52,6 @@ class AppTheme {
         ),
         centerTitle: false,
       ),
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: <TargetPlatform, PageTransitionsBuilder>{
-          TargetPlatform.android: CustomPageTransitionBuilder(),
-          TargetPlatform.iOS: CustomPageTransitionBuilder(),
-        },
-      ),
-      cupertinoOverrideTheme: NoDefaultCupertinoThemeData(
-        textTheme: CupertinoTextThemeData(
-          dateTimePickerTextStyle: TextStyle(
-            fontSize: 16.sp,
-            color: Colors.black,
-          ),
-          pickerTextStyle: TextStyle(
-            fontSize: 14.sp,
-            color: Colors.black,
-          ),
-        ),
-      ),
-    );
-    final TextTheme textTheme = GoogleFonts.expletusSansTextTheme.call();
-    return themeData.copyWith(
       textTheme: textTheme.copyWith(
         labelLarge: textTheme.labelLarge!.copyWith(
           fontSize: 14.sp,
@@ -89,10 +90,10 @@ class AppTheme {
   }
 
   static ThemeData get darkTheme {
-    ColorScheme colorScheme = const ColorScheme.dark();
+    const colorScheme = ColorScheme.dark();
+    final textTheme = themeData(colorScheme).textTheme;
 
-    final themeData = ThemeData(
-      useMaterial3: true,
+    return themeData(colorScheme).copyWith(
       colorScheme: colorScheme,
       brightness: colorScheme.brightness,
       appBarTheme: AppBarTheme(
@@ -103,9 +104,6 @@ class AppTheme {
         ),
         centerTitle: false,
       ),
-    );
-    final TextTheme textTheme = GoogleFonts.expletusSansTextTheme.call();
-    return themeData.copyWith(
       textTheme: textTheme.copyWith(
         labelLarge: textTheme.labelLarge!.copyWith(
           fontSize: 14.sp,

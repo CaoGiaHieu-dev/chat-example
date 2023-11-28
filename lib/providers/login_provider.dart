@@ -13,6 +13,7 @@ class LoginProvider extends ChangeNotifier {
     emailController.text = extra?.email ?? 'test@gmail.com';
     passController.text = extra?.password ?? '123456';
   }
+
   final key = GlobalKey<FormState>();
 
   final emailController = TextEditingController();

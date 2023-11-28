@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/chat_lobby_provider.dart';
@@ -20,24 +23,29 @@ import 'extra/login_extra.dart';
 
 part 'app_routes.g.dart';
 
-final _navigatorKey = GlobalKey<NavigatorState>();
+part 'go_route_data_custom.dart';
 
 class Routes {
   Routes._();
 
   static const register = '/register';
   static const login = '/login';
+
   static const home = '/home';
   static const chatLobby = '/chat-lobby';
   static const user = '/user';
-  static const chatRoom = '/chat-room';
+
+  static const chatRoom = 'chat-room/:roomId';
 }
 
 class AppRouter {
   AppRouter._();
 
+  static final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+  static final homeNavigatorKey = GlobalKey<NavigatorState>();
+
   static BuildContext get currentContext {
-    
     final context = router.routerDelegate.navigatorKey.currentContext;
     if (context?.mounted ?? false) {
       return router.routerDelegate.navigatorKey.currentContext!;
@@ -50,21 +58,11 @@ class AppRouter {
   }
 
   static final router = GoRouter(
-    navigatorKey: _navigatorKey,
+    navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: kDebugMode,
     initialLocation: Routes.home,
     routes: $appRoutes,
     redirect: (context, state) {
-      if (FirebaseAuth.instance.currentUser == null) {
-        switch (state.fullPath) {
-          case Routes.login:
-          case Routes.register:
-            break;
-          default:
-            return Routes.login;
-        }
-      }
-
       return null;
     },
   );
@@ -73,9 +71,12 @@ class AppRouter {
 @TypedGoRoute<LoginRoute>(
   path: Routes.login,
 )
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteDataCustom {
   const LoginRoute({this.$extra});
   final LoginExtra? $extra;
+
+  @override
+  bool get needAuthentication => false;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -91,8 +92,11 @@ class LoginRoute extends GoRouteData {
 @TypedGoRoute<RegisterRoute>(
   path: Routes.register,
 )
-class RegisterRoute extends GoRouteData {
+class RegisterRoute extends GoRouteDataCustom {
   const RegisterRoute();
+
+  @override
+  bool get needAuthentication => false;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -116,6 +120,11 @@ class RegisterRoute extends GoRouteData {
       routes: [
         TypedGoRoute<ChatLobbyRoute>(
           path: Routes.chatLobby,
+          routes: [
+            TypedGoRoute<ChatRoomRoute>(
+              path: Routes.chatRoom,
+            )
+          ],
         ),
       ],
     ),
@@ -137,60 +146,60 @@ class DashboardRoute extends StatefulShellRouteData {
     GoRouterState state,
     StatefulNavigationShell navigationShell,
   ) {
+    return navigationShell;
+  }
+
+  static Widget $navigatorContainerBuilder(
+    BuildContext context,
+    StatefulNavigationShell navigationShell,
+    List<Widget> children,
+  ) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => UserProvider(),
-        ),
-        ChangeNotifierProvider(
           create: (context) => ChatLobbyProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(),
+        ),
       ],
-      child: DashboardScreen(child: navigationShell),
+      child: DashboardScreen(
+        navigationShell: navigationShell,
+        children: children,
+      ),
     );
   }
 }
 
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteDataCustom {
   const HomeRoute();
+
+  static final $navigatorKey = AppRouter.homeNavigatorKey;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const HomeScreen();
+    return const Material(child: HomeScreen());
   }
 }
 
-class ChatLobbyRoute extends GoRouteData {
+class ChatLobbyRoute extends GoRouteDataCustom {
   const ChatLobbyRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const ChatLobbyScreen();
+    return const Material(child: ChatLobbyScreen());
   }
 }
 
-class UserRoute extends GoRouteData {
+class UserRoute extends GoRouteDataCustom {
   const UserRoute();
 
   @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return CustomTransitionPage(
-      child: const UserScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return CupertinoPageTransition(
-          primaryRouteAnimation: animation,
-          secondaryRouteAnimation: secondaryAnimation,
-          linearTransition: true,
-          child: child,
-        );
-      },
-    );
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Material(child: UserScreen());
   }
 }
 
-@TypedGoRoute<ChatRoomRoute>(
-  path: Routes.chatRoom,
-)
-class ChatRoomRoute extends GoRouteData {
+class ChatRoomRoute extends GoRouteDataCustom {
   const ChatRoomRoute({
     required this.roomId,
     required this.$extra,
@@ -199,11 +208,10 @@ class ChatRoomRoute extends GoRouteData {
   final ChatRoomExtra $extra;
   final String roomId;
 
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = _navigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return ChangeNotifierProvider(
+      key: GlobalObjectKey(roomId),
       create: (context) => ChatRoomProvider(roomId),
       child: ChatRoomScreen(extra: $extra),
     );

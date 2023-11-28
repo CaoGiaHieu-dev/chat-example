@@ -25,7 +25,7 @@ class AppOverlay {
   static void showOverlayNotify(
     BuildContext context, {
     required String content,
-    int duration = 2,
+    int second = 2,
   }) {
     if (_instance.showedOverlay) {
       removeOverlayNotify();
@@ -60,9 +60,12 @@ class AppOverlay {
     Overlay.of(context).insert(_instance.overlayEntry!);
     _instance.showedOverlay = true;
 
-    _instance.timer = Timer.periodic(Duration(seconds: duration), (timer) {
-      removeOverlayNotify();
-      timer.cancel();
-    });
+    _instance.timer = Timer.periodic(
+      Duration(seconds: second),
+      (timer) {
+        removeOverlayNotify();
+        timer.cancel();
+      },
+    );
   }
 }

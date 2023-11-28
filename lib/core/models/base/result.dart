@@ -1,9 +1,9 @@
-import 'error_type.dart';
+import 'package:dio/dio.dart';
 
 sealed class Result<T> {
   void when({
     void Function(T? data)? success,
-    void Function(ErrorType type, int? code, String error)? error,
+    void Function(DioExceptionType type, int? code, String error)? error,
   }) {
     switch (this) {
       case Success<T>():
@@ -28,10 +28,12 @@ class Success<T> extends Result<T> {
 
 class Error<T> extends Result<T> {
   int? errorCode;
-  ErrorType type;
+  DioExceptionType type;
   String message;
 
   Error({required this.type, required this.message, this.errorCode});
 
-  bool get isTimeOut => type == ErrorType.timeOut;
+  bool get isTimeOut =>
+      type == DioExceptionType.sendTimeout ||
+      type == DioExceptionType.receiveTimeout;
 }

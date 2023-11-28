@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'core/config.dart';
 import 'providers/app_provider.dart';
 import 'router/app_routes.dart';
-import 'widgets/dialogs/loading_widget.dart';
+import 'widgets/commons/loading_widget.dart';
 
 class RootApp extends StatelessWidget {
   const RootApp({super.key});
@@ -18,6 +18,7 @@ class RootApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
+          backButtonDispatcher: RootBackButtonDispatcher(),
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: AppTheme.themeMode,
@@ -29,7 +30,9 @@ class RootApp extends StatelessWidget {
             return Overlay(
               initialEntries: [
                 OverlayEntry(
-                  builder: (_) => AppBuilder(child: child!),
+                  builder: (_) => AppBuilder(
+                    child: child!,
+                  ),
                 )
               ],
             );
@@ -49,28 +52,26 @@ class AppBuilder extends StatelessWidget {
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaleFactor: 1,
-        ),
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-              create: (context) => AppProvider(),
-            )
-          ],
+      child: MediaQuery.withNoTextScaling(
+        child: ChangeNotifierProvider(
+          create: (context) => AppProvider(),
           builder: (context, child) {
             return Stack(
               children: [
                 child!,
-                context.select<AppProvider, bool>((value) {
-                  return value.loading;
-                })
-                    ? ColoredBox(
-                        color: Colors.black.withOpacity(0.35),
-                        child: const LoadingWidget(),
-                      )
-                    : const SizedBox(),
+                Selector<AppProvider, bool>(
+                  selector: (context, value) {
+                    return value.loading;
+                  },
+                  builder: (context, value, child) {
+                    if (value) return child!;
+                    return const SizedBox();
+                  },
+                  child: const ColoredBox(
+                    color: Colors.black54,
+                    child: LoadingWidget(),
+                  ),
+                )
               ],
             );
           },

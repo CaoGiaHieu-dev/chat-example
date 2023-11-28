@@ -17,8 +17,8 @@ class DetailDialog extends StatelessWidget {
   final bool willPopScope;
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => Future.value(willPopScope),
+    return PopScope(
+      canPop: willPopScope,
       child: Dialog(
         insetPadding: EdgeInsets.symmetric(
           horizontal: 16.0.w,

@@ -54,15 +54,15 @@ class UserProvider extends ChangeNotifier {
     await FirebaseAuth.instance.currentUser?.reload();
   }
 
-  Future<void> logout(BuildContext context) async {
-    AppUtils.showLoading();
-
-    await FirebaseAuth.instance.signOut();
-
-    AppUtils.hideLoading();
-
-    if (context.mounted) {
-      const LoginRoute().go(context);
+  void logout(BuildContext context) async {
+    try {
+      AppUtils.showLoading();
+      await FirebaseAuth.instance.signOut();
+      AppRouter.router.refresh();
+    } catch (e) {
+      AppLogger.print(e);
+    } finally {
+      AppUtils.hideLoading();
     }
   }
 

@@ -1,13 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 import '../core/extensions/context_extension.dart';
-import '../core/models/user/user_model.dart';
 import '../providers/chat_lobby_provider.dart';
-import '../router/app_routes.dart';
-import '../router/extra/chat_room_extra.dart';
 import '../widgets/commons/refresh_sticky.dart';
 
 class ChatLobbyScreen extends StatelessWidget {
@@ -51,8 +47,9 @@ class ChatLobbyScreen extends StatelessWidget {
                             item.imagePath != null
                                 ? CircleAvatar(
                                     radius: 30.r,
-                                    foregroundImage:
-                                        NetworkImage(item.imagePath!),
+                                    foregroundImage: NetworkImage(
+                                      item.imagePath!,
+                                    ),
                                   )
                                 : Icon(
                                     Icons.person,

@@ -53,7 +53,7 @@ class RegisterProvider extends ChangeNotifier {
                 email: emailController.text,
                 password: passController.text,
               ),
-            ).replace(context);
+            ).go(context);
           },
         );
       } on FirebaseAuthException catch (e) {

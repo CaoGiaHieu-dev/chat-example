@@ -59,19 +59,33 @@ extension ContextEx on BuildContext {
   // TextStyle get headline6 => Theme.of(this).textTheme.titleLarge!;
 
   TextStyle get displayLarge => textTheme.displayLarge!;
+
   TextStyle get displayMedium => textTheme.displayMedium!;
+
   TextStyle get displaySmall => textTheme.displaySmall!;
+
   TextStyle get headlineLarge => textTheme.headlineLarge!;
+
   TextStyle get headlineMedium => textTheme.headlineMedium!;
+
   TextStyle get headlineSmall => textTheme.headlineSmall!;
+
   TextStyle get titleLarge => textTheme.titleLarge!;
+
   TextStyle get titleMedium => textTheme.titleMedium!;
+
   TextStyle get titleSmall => textTheme.titleSmall!;
+
   TextStyle get labelLarge => textTheme.labelLarge!;
+
   TextStyle get labelMedium => textTheme.labelMedium!;
+
   TextStyle get labelSmall => textTheme.labelSmall!;
+
   TextStyle get bodyLarge => textTheme.bodyLarge!;
+
   TextStyle get bodyMedium => textTheme.bodyMedium!;
+
   TextStyle get bodySmall => textTheme.bodySmall!;
 
   Size get mediaSize => MediaQuery.sizeOf(this);
@@ -116,15 +130,6 @@ extension ContextEx on BuildContext {
       if (height >= heightDefault) return size;
       return size * height / heightDefault;
     }
-  }
-
-  Future<T?> pushPage<T>(Widget child, {String? name}) async {
-    return await navigator!.push<T>(
-      MaterialPageRoute(
-        builder: (context) => child,
-        settings: RouteSettings(name: name),
-      ),
-    );
   }
 
   Future<T?> dialog<T>(

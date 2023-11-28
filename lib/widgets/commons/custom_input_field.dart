@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -21,11 +22,19 @@ class CustomInputField extends StatefulWidget {
 }
 
 class _CustomInputFieldState extends State<CustomInputField> {
+  final focusNode = FocusNode();
   bool isHidePassword = true;
+
   @override
   void initState() {
     isHidePassword = widget.isPassword;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -49,6 +58,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
               obscureText: widget.isPassword ? isHidePassword : false,
               controller: widget.controller,
               validator: widget.validator,
+              onChanged: (value) {},
               decoration: InputDecoration(
                 suffixIcon: widget.isPassword
                     ? IconButton(

@@ -56,6 +56,6 @@ class ChatLobbyProvider extends ChangeNotifier {
       $extra: ChatRoomExtra(
         withUser: withUser,
       ),
-    ).push(context);
+    ).go(context);
   }
 }

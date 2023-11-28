@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 
 import '../core/models/chat/message_in_room.dart';
 import '../core/utilities/app_utils.dart';
@@ -25,6 +23,8 @@ class ChatRoomProvider extends ChangeNotifier {
   final messageHistories = <MessageInRoom>[];
 
   StreamSubscription<DatabaseEvent>? _subscription;
+
+  bool isSending = false;
 
   void init() {
     _subscription = ref.child(roomId).onValue.listen((event) {
@@ -66,6 +66,8 @@ class ChatRoomProvider extends ChangeNotifier {
 
   Future<void> onSend() async {
     if (inputController.text.isEmpty) return;
+    if (isSending) return;
+    isSending = true;
 
     try {
       messageHistories.insert(
@@ -73,17 +75,20 @@ class ChatRoomProvider extends ChangeNotifier {
         senderMessage(inputController.text.trim()),
       );
 
-      ref.child(roomId).set(
+      inputController.clear();
+
+      await ref.child(roomId).set(
             messageHistories.map((e) => e.toJson()).toList(),
           );
-
-      inputController.clear();
     } catch (e) {
       AppUtils.showToast(e.toString());
     }
+    isSending = false;
   }
 
-  Future<void> refreshChat() async {}
+  Future<void> refreshChat() async {
+    init();
+  }
 
   MessageInRoom senderMessage(String message) {
     return MessageInRoom(

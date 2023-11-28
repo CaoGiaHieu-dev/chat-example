@@ -21,8 +21,8 @@ class WarningDialog extends StatelessWidget {
   final bool isDefaultCancelPop;
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => Future.value(willPopScope),
+    return PopScope(
+      canPop: willPopScope,
       child: Dialog(
         insetPadding: EdgeInsets.zero,
         child: SizedBox(

@@ -59,36 +59,42 @@ class ChatRoomScreen extends StatelessWidget {
                                 ? Alignment.centerRight
                                 : Alignment.centerLeft,
                             child: UnconstrainedBox(
-                              child: Container(
-                                padding: EdgeInsets.all(10.r),
-                                decoration: BoxDecoration(
-                                  color: Colors.pinkAccent,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                constraints: BoxConstraints(
-                                  minHeight: 50.h,
-                                  maxWidth: context.width * 2 / 3,
-                                ),
-                                margin: EdgeInsets.only(top: 10.h),
-                                child: Align(
-                                  alignment: isSender
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  widthFactor: 1,
-                                  child: Text(
-                                    context
-                                        .read<ChatRoomProvider>()
-                                        .messageHistories[index]
-                                        .message,
-                                    textAlign: isSender
-                                        ? TextAlign.right
-                                        : TextAlign.left,
-                                    style: context.bodyMedium.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10.r),
+                                    decoration: BoxDecoration(
+                                      color: isSender
+                                          ? Colors.blue.shade200
+                                          : Colors.pinkAccent,
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                    constraints: BoxConstraints(
+                                      minHeight: 50.h,
+                                      maxWidth: context.width * 2 / 3,
+                                    ),
+                                    margin: EdgeInsets.only(top: 10.h),
+                                    child: Align(
+                                      alignment: isSender
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                      widthFactor: 1,
+                                      child: Text(
+                                        context
+                                            .read<ChatRoomProvider>()
+                                            .messageHistories[index]
+                                            .message,
+                                        textAlign: isSender
+                                            ? TextAlign.right
+                                            : TextAlign.left,
+                                        style: context.bodyMedium.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
@@ -108,9 +114,11 @@ class ChatRoomScreen extends StatelessWidget {
                       keyboardType: TextInputType.multiline,
                       maxLines: 5,
                       minLines: 1,
+                      selectionControls: EmptyTextSelectionControls(),
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 10.w,
+                          vertical: 5.h,
                         ),
                         border: const OutlineInputBorder(),
                       ),

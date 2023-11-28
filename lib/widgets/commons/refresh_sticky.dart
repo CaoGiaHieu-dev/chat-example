@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class RefreshSticky extends StatefulWidget {
     this.controller,
     this.moveToFirstAfterComplete = false,
     this.reverse = false,
+    this.scaleLoadingIcon = 1,
   });
 
   final Widget Function(
@@ -27,6 +29,7 @@ class RefreshSticky extends StatefulWidget {
   final ScrollController? controller;
   final bool moveToFirstAfterComplete;
   final bool reverse;
+  final double scaleLoadingIcon;
 
   @override
   State<RefreshSticky> createState() => _RefreshStickyState();
@@ -37,13 +40,12 @@ class _RefreshStickyState extends State<RefreshSticky> {
   final loadingSize = ValueNotifier(0.0);
   final isStartLoading = ValueNotifier(false);
 
-  Completer<void>? completer;
-
   late final ScrollController scroll;
 
   @override
   void initState() {
     scroll = widget.controller ?? ScrollController();
+
     WidgetsBinding.instance.endOfFrame.whenComplete(() {
       listenOnOffset();
     });
@@ -68,9 +70,15 @@ class _RefreshStickyState extends State<RefreshSticky> {
     if (isStartLoading.value) return;
 
     if (scroll.offset < 0) {
-      loadingHeight.value = scroll.offset;
-      loadingSize.value = scroll.offset / widget.size;
-    } else if (scroll.offset >= 0) {
+      loadingHeight.value = max(
+        scroll.offset,
+        -widget.size,
+      );
+      loadingSize.value = max(
+        scroll.offset / widget.size,
+        -widget.scaleLoadingIcon,
+      );
+    } else {
       loadingHeight.value = 0;
       loadingSize.value = 0;
     }
@@ -83,23 +91,17 @@ class _RefreshStickyState extends State<RefreshSticky> {
     if (isStartLoading.value) return;
     isStartLoading.value = scroll.offset == -widget.size;
 
-    WidgetsBinding.instance.endOfFrame.whenComplete(() async {
-      completer = Completer();
+    await WidgetsBinding.instance.endOfFrame;
 
-      completer?.complete(widget.onRefresh());
+    await widget.onRefresh();
+    isStartLoading.value = false;
 
-      await completer?.future;
-      completer = null;
-
-      isStartLoading.value = false;
-
-      if (widget.moveToFirstAfterComplete) {
-        updateScrollUpdateOffset(0);
-      } else {
-        loadingHeight.value = 0;
-        loadingSize.value = 0;
-      }
-    });
+    if (widget.moveToFirstAfterComplete) {
+      updateScrollUpdateOffset(0);
+    } else {
+      loadingHeight.value = 0;
+      loadingSize.value = 0;
+    }
   }
 
   Future<void> updateScrollUpdateOffset(double offset) async {
@@ -118,28 +120,25 @@ class _RefreshStickyState extends State<RefreshSticky> {
         if (height > 0) return const SizedBox();
         return AnimatedContainer(
           duration: Duration.zero,
-          height: height * -1,
-          child: Center(
-            child: ValueListenableBuilder<double>(
-              valueListenable: loadingSize,
-              builder: (context, size, _) {
-                return Center(
-                  child: ValueListenableBuilder<bool>(
-                    valueListenable: isStartLoading,
-                    builder: (context, isLoading, _) {
-                      return AnimatedScale(
-                        scale: size,
-                        duration: Duration.zero,
-                        child: isLoading
-                            ? widget.loadingBuilder?.call(context) ??
-                                const CircularProgressIndicator.adaptive()
-                            : widget.preLoadingBuilder?.call(context) ??
-                                const CircularProgressIndicator.adaptive(),
-                      );
-                    },
-                  ),
-                );
+          height: height * -widget.scaleLoadingIcon,
+          alignment: Alignment.center,
+          child: ValueListenableBuilder<double>(
+            valueListenable: loadingSize,
+            builder: (context, size, child) {
+              return AnimatedScale(
+                scale: size,
+                duration: Duration.zero,
+                child: child,
+              );
+            },
+            child: ValueListenableBuilder<bool>(
+              valueListenable: isStartLoading,
+              builder: (context, isLoading, child) {
+                return isLoading
+                    ? widget.loadingBuilder?.call(context) ?? child!
+                    : widget.preLoadingBuilder?.call(context) ?? child!;
               },
+              child: const Center(child: CircularProgressIndicator.adaptive()),
             ),
           ),
         );
@@ -149,6 +148,24 @@ class _RefreshStickyState extends State<RefreshSticky> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> child = [
+      _loading(),
+      Expanded(
+        child: Listener(
+          onPointerUp: (_) {
+            startRefresh();
+          },
+          child: widget.builder.call(
+            context,
+            scroll,
+          ),
+        ),
+      ),
+    ];
+
+    if (widget.reverse) {
+      child = child.reversed.toList();
+    }
     return LayoutBuilder(
       builder: (context, constraints) {
         return ConstrainedBox(
@@ -156,23 +173,7 @@ class _RefreshStickyState extends State<RefreshSticky> {
             minHeight: constraints.maxHeight,
           ),
           child: IntrinsicHeight(
-            child: Column(
-              children: [
-                if (!widget.reverse) _loading(),
-                Expanded(
-                  child: Listener(
-                    onPointerUp: (_) {
-                      startRefresh();
-                    },
-                    child: widget.builder.call(
-                      context,
-                      scroll,
-                    ),
-                  ),
-                ),
-                if (widget.reverse) _loading(),
-              ],
-            ),
+            child: Column(children: child),
           ),
         );
       },

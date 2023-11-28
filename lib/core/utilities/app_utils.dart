@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/app_provider.dart';
 import '../../router/app_routes.dart';
-import '../../widgets/dialogs/loading_widget.dart';
 import 'app_overlay.dart';
 
 class AppUtils {
@@ -14,11 +12,15 @@ class AppUtils {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  static showToast(String message) {
+  static showToast(
+    String message, [
+    BuildContext? context,
+    int second = 2,
+  ]) {
     AppOverlay.showOverlayNotify(
-      AppRouter.currentContext,
+      context ?? AppRouter.currentContext,
       content: message,
-      duration: 3,
+      second: second,
     );
   }
 

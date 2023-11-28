@@ -8,8 +8,18 @@ import '../providers/login_provider.dart';
 import '../router/app_routes.dart';
 import '../widgets/commons/custom_input_field.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +93,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         MaterialButton(
                           onPressed: () {
-                            const RegisterRoute().replace(context);
+                            const RegisterRoute().go(context);
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),
