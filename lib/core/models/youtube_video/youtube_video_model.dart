@@ -1,5 +1,3 @@
-// ignore_for_file: invalid_annotation_target
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'youtube_video_model.freezed.dart';
 part 'youtube_video_model.g.dart';
