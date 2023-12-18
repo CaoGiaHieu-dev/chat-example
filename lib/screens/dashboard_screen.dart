@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../gen/assets.gen.dart';
+import '../providers/home_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({
@@ -38,7 +40,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.didUpdateWidget(oldWidget);
   }
 
-  void _changeIndex(int index) {
+  Future<void> _changeIndex(int index) async {
+    if (widget.navigationShell.currentIndex == index) {
+      if (index == 0) {
+        await context.read<HomeProvider>().updateScrollUpdateOffset(-50.h);
+        if (mounted) {
+          context.read<HomeProvider>().startRefresh();
+        }
+      }
+    }
+
     widget.navigationShell.goBranch(
       index,
       initialLocation: index == widget.navigationShell.currentIndex,

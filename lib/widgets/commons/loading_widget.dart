@@ -13,7 +13,9 @@ class LoadingWidget extends StatelessWidget {
           color: Colors.white,
           child: SizedBox.square(
             dimension: 100.r,
-            child: const CircularProgressIndicator.adaptive(),
+            child: const UnconstrainedBox(
+              child: CircularProgressIndicator.adaptive(),
+            ),
           ),
         ),
       ),

@@ -1,10 +1,21 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart'
+    hide ClosedCaption;
 
 import '../core/extensions/context_extension.dart';
+import '../core/models/youtube_video/youtube_video_model.dart';
 import '../gen/assets.gen.dart';
+import '../providers/home_provider.dart';
+import '../router/app_routes.dart';
+import '../widgets/video_player_custom.dart/video_player_custom.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,148 +25,133 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final loadingHeight = ValueNotifier(0.0);
-  final loadingSize = ValueNotifier(0.0);
-  final isStartLoading = ValueNotifier(false);
-
-  final scroll = ScrollController();
-
   @override
   void initState() {
-    WidgetsBinding.instance.endOfFrame.whenComplete(() {
-      listenOnOffset();
-    });
-
+    context.read<HomeProvider>().getListVideo();
     super.initState();
   }
 
   @override
-  void dispose() {
-    scroll.removeListener(updateLoading);
-    super.dispose();
-  }
+  Widget build(BuildContext context) {
+    return Consumer<HomeProvider>(
+      builder: (context, provider, _) {
+        return Listener(
+          onPointerUp: (_) {
+            provider.startRefresh();
+          },
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            controller: provider.scroll,
+            slivers: [
+              SliverPersistentHeader(
+                delegate: _Header(),
+                floating: true,
+              ),
+              const SliverToBoxAdapter(
+                child: _Loading(),
+              ),
+              const SliverToBoxAdapter(
+                child: _StatusUpload(),
+              ),
+              const SliverToBoxAdapter(
+                child: _DividerSpace(),
+              ),
+              const SliverToBoxAdapter(
+                child: _Menu(),
+              ),
+              const SliverToBoxAdapter(child: _DividerSpace()),
+              Selector<HomeProvider, YoutubeVideoModel?>(
+                selector: (context, value) {
+                  return value.resultYoutube;
+                },
+                builder: (context, value, _) {
+                  if (value?.items?.isEmpty ?? true) {
+                    return const SliverToBoxAdapter(
+                      child: Center(
+                        child: Text(
+                          'There is no post yet',
+                        ),
+                      ),
+                    );
+                  }
 
-  void listenOnOffset() {
-    scroll.removeListener(updateLoading);
-    if (scroll.hasClients) {
-      scroll.addListener(updateLoading);
-    }
-  }
-
-  void updateLoading() async {
-    if (isStartLoading.value) return;
-
-    if (scroll.offset < 0) {
-      loadingHeight.value = max(
-        scroll.offset,
-        -50.h,
-      );
-      loadingSize.value = max(
-        scroll.offset / 50.h,
-        -1,
-      );
-    } else {
-      loadingHeight.value = 0;
-      loadingSize.value = 0;
-    }
-  }
-
-  Future<void> startRefresh(Future<void> Function() onRefresh) async {
-    if (scroll.offset > -50.h) return;
-    await updateScrollUpdateOffset(-50.h);
-
-    if (isStartLoading.value) return;
-    isStartLoading.value = scroll.offset == -50.h;
-
-    await WidgetsBinding.instance.endOfFrame;
-
-    await onRefresh();
-
-    isStartLoading.value = false;
-
-    updateScrollUpdateOffset(0);
-  }
-
-  Future<void> updateScrollUpdateOffset(double offset) async {
-    await scroll.animateTo(
-      offset,
-      duration: kThemeAnimationDuration,
-      curve: Curves.linear,
-    );
-    updateLoading();
-  }
-
-  Widget _loading() {
-    return ValueListenableBuilder<double>(
-      valueListenable: loadingHeight,
-      builder: (context, height, _) {
-        if (height > 0) return const SizedBox();
-        return AnimatedContainer(
-          color: Colors.white,
-          duration: Duration.zero,
-          height: height * -1,
-          alignment: Alignment.center,
-          child: ValueListenableBuilder<double>(
-            valueListenable: loadingSize,
-            builder: (context, size, child) {
-              return AnimatedScale(
-                scale: size,
-                duration: Duration.zero,
-                child: child,
-              );
-            },
-            child: ValueListenableBuilder<bool>(
-              valueListenable: isStartLoading,
-              builder: (context, isLoading, child) {
-                return child!;
-              },
-              child: const Center(child: CircularProgressIndicator.adaptive()),
-            ),
+                  return SliverList.separated(
+                    itemCount: value?.items?.length,
+                    itemBuilder: (context, index) {
+                      return _FeedItem(
+                        item: value?.items?[index],
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const _DividerSpace();
+                    },
+                  );
+                },
+              ),
+              Selector<HomeProvider, YoutubeVideoModel?>(
+                selector: (context, value) {
+                  return value.resultYoutube;
+                },
+                builder: (context, value, _) {
+                  return SliverToBoxAdapter(
+                    child: value?.nextPageToken?.isNotEmpty ?? false
+                        ? SizedBox.square(
+                            dimension: 50.r,
+                            child: const CircularProgressIndicator.adaptive(),
+                          )
+                        : const Center(
+                            child: Text('There is no more data'),
+                          ),
+                  );
+                },
+              ),
+            ],
           ),
         );
       },
     );
   }
+}
+
+class _Loading extends StatelessWidget {
+  const _Loading();
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      onPointerUp: (_) {
-        startRefresh(() async {
-          await Future.delayed(const Duration(seconds: 2));
-        });
+    return Consumer<HomeProvider>(
+      builder: (context, provider, _) {
+        return ValueListenableBuilder<double>(
+          valueListenable: provider.loadingHeight,
+          builder: (context, height, _) {
+            if (height > 0) return const SizedBox();
+            return AnimatedContainer(
+              color: Colors.white,
+              duration: Duration.zero,
+              height: height * -1,
+              alignment: Alignment.center,
+              child: ValueListenableBuilder<double>(
+                valueListenable: provider.loadingSize,
+                builder: (context, size, child) {
+                  return AnimatedScale(
+                    scale: size,
+                    duration: Duration.zero,
+                    child: child,
+                  );
+                },
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: provider.isStartLoading,
+                  builder: (context, isLoading, child) {
+                    return child!;
+                  },
+                  child: const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
       },
-      child: CustomScrollView(
-        controller: scroll,
-        slivers: [
-          SliverPersistentHeader(
-            delegate: _Header(),
-            floating: true,
-          ),
-          SliverToBoxAdapter(
-            child: _loading(),
-          ),
-          const SliverToBoxAdapter(
-            child: _StatusUpload(),
-          ),
-          const SliverToBoxAdapter(
-            child: _DividerSpace(),
-          ),
-          const SliverToBoxAdapter(
-            child: _Menu(),
-          ),
-          const SliverToBoxAdapter(child: _DividerSpace()),
-          SliverList.separated(
-            itemCount: 100,
-            itemBuilder: (context, index) {
-              return const _FeedItem();
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const _DividerSpace();
-            },
-          )
-        ],
-      ),
     );
   }
 }
@@ -172,12 +168,103 @@ class _DividerSpace extends StatelessWidget {
   }
 }
 
-class _FeedItem extends StatelessWidget {
-  const _FeedItem();
+class _FeedItem extends StatefulWidget {
+  const _FeedItem({this.item});
+
+  final ItemsVideo? item;
+
+  @override
+  State<_FeedItem> createState() => _FeedItemState();
+}
+
+class _FeedItemState extends State<_FeedItem>
+    with AutomaticKeepAliveClientMixin {
+  final key = GlobalKey();
+  final loading = ValueNotifier(true);
+
+  VideoPlayerController? videoPlayerController;
+
+  OverlayEntry? overlayEntry;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.endOfFrame.whenComplete(() async {
+      await initVideoState();
+      loading.value = false;
+      if (mounted) {
+        context.read<HomeProvider>().scroll.addListener(autoPlay);
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  void deactivate() {
+    context.read<HomeProvider>().scroll.removeListener(autoPlay);
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController?.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  void autoPlay() {
+    final renderBox = key.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) {
+      videoPlayerController?.pause();
+      return;
+    }
+
+    final offsetBox = renderBox.localToGlobal(Offset.zero);
+
+    if (offsetBox.dy.isNaN || offsetBox.dx.isNaN) {
+      videoPlayerController?.pause();
+      return;
+    }
+
+    if (offsetBox.dy < 0) {
+      videoPlayerController?.pause();
+      return;
+    }
+
+    final centerTop = (context.height) - renderBox.size.height;
+
+    if (offsetBox.dy > centerTop) {
+      videoPlayerController?.pause();
+      return;
+    }
+
+    videoPlayerController?.play();
+  }
+
+  Future<void> initVideoState() async {
+    final yt = YoutubeExplode();
+    if (widget.item?.id?.videoId == null) {
+      return;
+    }
+    final streamInfo = await yt.videos.streamsClient.getManifest(
+      widget.item?.id?.videoId,
+    );
+    videoPlayerController = VideoPlayerController.networkUrl(
+      streamInfo.muxed.last.url,
+    );
+    yt.close();
+
+    await videoPlayerController?.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
+      key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 15.h),
@@ -196,7 +283,7 @@ class _FeedItem extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'MasterClass',
+                          widget.item?.snippet?.channelTitle ?? '',
                           style: context.titleSmall,
                         ),
                       ),
@@ -204,7 +291,11 @@ class _FeedItem extends StatelessWidget {
                     SizedBox(height: 5.h),
                     Expanded(
                       child: Text(
-                        '9 giờ trước',
+                        DateFormat('hh:mm:ss dd-MM-yyyy').format(
+                          DateTime.parse(
+                            widget.item?.snippet?.publishTime ?? '',
+                          ),
+                        ),
                         style: context.labelMedium.copyWith(
                           color: Colors.grey.shade700,
                         ),
@@ -230,12 +321,48 @@ class _FeedItem extends StatelessWidget {
             horizontal: 10.w,
             vertical: 5.h,
           ),
-          child: const Text(
-            '*Slaps top of trending* \nThis bad boy can fit so many "EZ mids" in it',
+          child: Text(
+            widget.item?.snippet?.title ?? '',
           ),
         ),
-        Image.network(
-          'https://scontent.fsgn2-4.fna.fbcdn.net/v/t39.30808-6/405831898_901335371349016_3049660452037547597_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeGdpXXgygN-5USlT1mnKVVQViFWoNjR46JWIVag2NHjoq74SlI4fFAsaLCkFpdkGyAQXKgdi4cbJyXVHlg884Nh&_nc_ohc=6cMQjx0gQVQAX8nlOU-&_nc_ht=scontent.fsgn2-4.fna&oh=00_AfATEM0YHqWFUQI_4sKMCG-84GSiCCGjTRBxDkR9CAjxTA&oe=656AC7F2',
+        SizedBox(
+          height: 250.h,
+          child: ValueListenableBuilder(
+            valueListenable: loading,
+            builder: (context, value, child) {
+              if (value || videoPlayerController == null) {
+                return const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                );
+              }
+
+              return VideoPlayerCustom(
+                controller: videoPlayerController!,
+                bottomSheetBuildContext: AppRouter.currentContext,
+                onFullScreenOptionTap: (value) async {
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.landscapeLeft,
+                    DeviceOrientation.landscapeRight
+                  ]);
+                  await Navigator.of(AppRouter.currentContext).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return VideoPlayerCustom(
+                          controller: videoPlayerController!,
+                          isFullScreen: true,
+                          onFullScreenOptionTap: context.pop,
+                        );
+                      },
+                    ),
+                  );
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.portraitDown,
+                    DeviceOrientation.portraitUp
+                  ]);
+                },
+              );
+            },
+          ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(
@@ -381,7 +508,7 @@ class _Menu extends StatelessWidget {
               child: SizedBox(width: 10.r),
             ),
             SliverPersistentHeader(
-              delegate: _PinnedNews(),
+              delegate: _PinnedNews(context: context),
               pinned: true,
             ),
             SliverToBoxAdapter(
@@ -434,7 +561,7 @@ class _MenuItem extends StatelessWidget {
           image: const DecorationImage(
             fit: BoxFit.fitWidth,
             image: NetworkImage(
-              'https://scontent.xx.fbcdn.net/v/t51.29350-10/404587986_987233915707400_6962653065384653598_n.jpg?stp=c0.5000x0.5000f_dst-webp_e15_p206x370_q70_tt1_u&efg=eyJ1cmxnZW4iOiJ1cmxnZW5fZnJvbV91cmwifQ&_nc_eui2=AeGxQ35GFGFMxcheqV8d4hGp5E7wLLhIXELkTvAsuEhcQpgrxyudjtP3U4TVcSeW14D1Kb9L28p2IfqVqPl_a4yB&_nc_cid=0&_nc_ad=z-m&_nc_rml=0&_nc_ht=scontent.fhan3-1.fna&_nc_cat=102&_nc_ohc=ALL9ydmbAeUAX_GAp8j&ccb=1-7&_nc_sid=869369&oh=00_AfCJemySCzkOjW-gK2Hb0THfriydmxeMfD6c9UOmgmh5aQ&oe=65698FCB&_nc_fr=fhan3c01',
+              'https://picsum.photos/200/300',
             ),
           ),
         ),
@@ -459,88 +586,109 @@ class _MenuItem extends StatelessWidget {
 }
 
 class _PinnedNews extends SliverPersistentHeaderDelegate {
+  final BuildContext context;
+
+  _PinnedNews({required this.context});
   @override
   Widget build(
     BuildContext context,
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final ratio =
-            (constraints.maxHeight - shrinkOffset) / constraints.maxHeight;
-        return UnconstrainedBox(
-          child: RawMaterialButton(
-            elevation: 0,
-            animationDuration: Duration.zero,
-            fillColor: Colors.white,
-            constraints: BoxConstraints(
-              maxHeight: (constraints.maxHeight - shrinkOffset),
-              maxWidth: max(maxExtent * ratio, 60.w),
-            ),
-            padding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.r / ratio),
-              side: BorderSide(width: 0.3.w),
-            ),
-            onPressed: () {},
-            child: LayoutBuilder(
-              builder: (context, stackConstraints) {
-                return Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Column(
-                      children: [
-                        Expanded(
-                          flex: 7,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(8.r / ratio),
-                              bottom: ratio < 0.5
-                                  ? Radius.circular(8.r / ratio)
-                                  : Radius.zero,
-                            ),
-                            child: Image.network(
-                              'https://scontent.xx.fbcdn.net/v/t39.30808-1/393271336_3526555080933066_5537505423868840512_n.jpg?stp=dst-jpg_p320x320&_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeGXTJnVgcQJWaLgFYoiRj8QLAsCmBojki4sCwKYGiOSLqzv2h7xwT7FB3y9oDnwLxX2_HcLj-p2ulOnigLZdSDA&_nc_ohc=iTS5dhj3ejQAX84UTtS&_nc_ht=scontent.fhan3-3.fna&oh=00_AfCgc5hwWhe6OnGWpA9H6b2F4TF7pmhgb2DyJYloiOqfXA&oe=656AD9E0&_nc_fr=fhan3c03',
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-                        if (ratio > 0.5)
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final ratio =
+              (constraints.maxHeight - shrinkOffset) / constraints.maxHeight;
+          final circleBorder = 8.r / ratio > 0 ? 8.r / ratio : 100;
+
+          return UnconstrainedBox(
+            child: RawMaterialButton(
+              elevation: 0,
+              animationDuration: Duration.zero,
+              fillColor: Colors.white,
+              constraints: BoxConstraints(
+                maxHeight: max(constraints.maxHeight - shrinkOffset, 60.r),
+                maxWidth: max(
+                  minExtent * ratio,
+                  60.r,
+                ),
+              ),
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  circleBorder.toDouble() * (ratio < 0.5 ? 2 : 1),
+                ),
+                side: BorderSide(width: 0.3.w),
+              ),
+              onPressed: () {},
+              child: LayoutBuilder(
+                builder: (context, stackConstraints) {
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    fit: StackFit.expand,
+                    children: [
+                      Column(
+                        children: [
                           Expanded(
-                            flex: 2,
-                            child: Opacity(
-                              opacity: ratio,
-                              child: Center(
-                                child: Text(
-                                  'Tạo tin',
-                                  style: context.titleSmall,
+                            flex: 7,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(
+                                  circleBorder.toDouble() *
+                                      (ratio < 0.5 ? 2 : 1),
                                 ),
+                                bottom: ratio < 0.5
+                                    ? Radius.circular(
+                                        circleBorder.toDouble() * 2,
+                                      )
+                                    : Radius.zero,
+                              ),
+                              child: Image.network(
+                                'https://picsum.photos/200/300',
+                                fit: BoxFit.fill,
+                                width: double.infinity,
+                                height: double.infinity,
                               ),
                             ),
                           ),
-                      ],
-                    ),
-                    if (ratio < 0.5)
-                      Positioned(
-                        right: 0,
-                        top: stackConstraints.maxHeight / 2 - 10.r / 2,
-                        child: CircleAvatar(
-                          radius: 10.r,
-                          backgroundColor: Colors.blue,
-                          child: Icon(
-                            Icons.add,
-                            size: 20.r,
+                          if (ratio > 0.5)
+                            Expanded(
+                              flex: 2,
+                              child: Opacity(
+                                opacity: ratio,
+                                child: Center(
+                                  child: Text(
+                                    'Tạo tin',
+                                    style: context.titleSmall,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      if (ratio < 0.5)
+                        Positioned(
+                          right: 0,
+                          top: stackConstraints.maxHeight / 2 - 10.r / 2,
+                          child: CircleAvatar(
+                            radius: 10.r,
+                            backgroundColor: Colors.blue,
+                            child: Icon(
+                              Icons.add,
+                              size: 20.r,
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              },
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -635,7 +783,9 @@ class _Header extends SliverPersistentHeaderDelegate {
                   ),
                 ),
                 padding: EdgeInsets.zero,
-                onPressed: () {},
+                onPressed: () {
+                  context.read<HomeProvider>().gotoChat(context);
+                },
                 icon: const Icon(Icons.chat),
               ),
               IconButton(

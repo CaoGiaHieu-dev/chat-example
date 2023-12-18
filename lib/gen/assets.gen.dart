@@ -28,6 +28,10 @@ class Assets {
   static const SvgGenImage iconsHomeActivate =
       SvgGenImage('assets/icons/home_activate.svg');
 
+  /// File path: assets/icons/reorder@2x.png
+  static const AssetGenImage iconsReorder2x =
+      AssetGenImage('assets/icons/reorder@2x.png');
+
   /// File path: assets/icons/smile.svg
   static const SvgGenImage iconsSmile = SvgGenImage('assets/icons/smile.svg');
 
@@ -39,11 +43,12 @@ class Assets {
       SvgGenImage('assets/icons/user_activate.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [
+  List<dynamic> get values => [
         iconsChat,
         iconsChatActivate,
         iconsHome,
         iconsHomeActivate,
+        iconsReorder2x,
         iconsSmile,
         iconsUser,
         iconsUserActivate

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/chat_lobby_provider.dart';
 import '../providers/chat_room_provider.dart';
+import '../providers/home_provider.dart';
 import '../providers/login_provider.dart';
 import '../providers/register_provider.dart';
 import '../providers/user_provider.dart';
@@ -157,6 +158,9 @@ class DashboardRoute extends StatefulShellRouteData {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (context) => HomeProvider(),
+        ),
+        ChangeNotifierProvider(
           create: (context) => ChatLobbyProvider(),
         ),
         ChangeNotifierProvider(
@@ -178,7 +182,7 @@ class HomeRoute extends GoRouteDataCustom {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Material(child: HomeScreen());
+    return const HomeScreen();
   }
 }
 
@@ -186,7 +190,7 @@ class ChatLobbyRoute extends GoRouteDataCustom {
   const ChatLobbyRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Material(child: ChatLobbyScreen());
+    return const ChatLobbyScreen();
   }
 }
 
